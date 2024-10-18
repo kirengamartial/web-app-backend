@@ -15,11 +15,12 @@ const getAllUsers = async(req, res) => {
 
 const registerUser = async(req, res) => {
     try {
-        const {name, email, password} = req.body
+        const {name, email, password, isContributor} = req.body
         const user = await User.create({
         name,
         email, 
-        password
+        password,
+        isContributor
         })
         
         generateToken(res, user._id)
