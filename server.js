@@ -2,8 +2,12 @@ import express from 'express'
 import dotenv from 'dotenv'
 import connectDb from './config/db.js'
 import userRoutes from './routes/userRoutes.js'
+import testRoutes from './routes/testRoutes.js'
 import cookieParser from 'cookie-parser'
+import { Server as SocketIOServer } from 'socket.io';
+import http from 'http';
 import cors from 'cors'
+import chatApp from './utilis/chatApp.js'
 dotenv.config()
 
 
@@ -21,8 +25,19 @@ app.use(cors({
 }))
 
 app.use('/api/users',userRoutes)
+app.use('/api/test',testRoutes)
 
-app.listen(PORT,() => {
+const server = http.createServer(app);
+export const io = new SocketIOServer(server, {
+  cors: {
+    origin: ['*', 'http://localhost:3000'],
+    credentials: true,
+  },
+});
+
+chatApp()
+server.listen(PORT,() => {
     console.log(`App is running on PORT ${PORT}`)
 })
+
 export default app
