@@ -15,19 +15,16 @@ const getAllUsers = async(req, res) => {
 
 const registerUser = async(req, res) => {
     try {
-        const {name, email, password} = req.body
+        const {name, email, password, isContributor} = req.body
         const user = await User.create({
         name,
         email, 
-        password
+        password,
+        isContributor
         })
         
         generateToken(res, user._id)
-        res.status(200).json({
-            name: user.name, 
-            email: user.email,
-            isAdmin: user.isAdmin
-        })
+        res.status(200).json(user)
     } catch (error) {
         // console.log(error)
         if (error.code && error.code === 11000) {
@@ -62,11 +59,7 @@ const loginUser = async(req, res) => {
 
             if(user && (await user.checkPassword(password))) {
                 generateToken(res, user._id)
-            return res.status(200).json({
-                    name: user.name,
-                    email: user.email,
-                    isAdmin: user.isAdmin
-                })
+            return res.status(200).json(user)
             }else {
                 return res.status(400).json({message: "wrong password"})
             }
