@@ -11,6 +11,8 @@ const generateToken = (res, userId) => {
         secure: process.env.NODE_ENV !== 'development',
         sameSite: 'strict'
     }) 
+
+    return token
 }
 
 export default generateToken

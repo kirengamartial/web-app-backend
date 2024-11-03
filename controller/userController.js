@@ -23,10 +23,17 @@ const registerUser = async(req, res) => {
         isContributor
         })
         
-        generateToken(res, user._id)
-        res.status(200).json(user)
+        const token = generateToken(res, user._id);
+        
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            isContributor: user.isContributor,
+            token: token
+        });
     } catch (error) {
-        // console.log(error)
         if (error.code && error.code === 11000) {
           return res.status(500).json({message: 'Email already exists' });
         }
@@ -58,8 +65,16 @@ const loginUser = async(req, res) => {
             const user = await User.findOne({email})
 
             if(user && (await user.checkPassword(password))) {
-                generateToken(res, user._id)
-            return res.status(200).json(user)
+              const token = generateToken(res, user._id);
+        
+              res.json({
+                  _id: user._id,
+                  name: user.name,
+                  email: user.email,
+                  isAdmin: user.isAdmin,
+                  isContributor: user.isContributor,
+                  token: token
+              });
             }else {
                 return res.status(400).json({message: "wrong password"})
             }

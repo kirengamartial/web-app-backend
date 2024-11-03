@@ -22,7 +22,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin:[ "*", 'https://web-app-six-gules.vercel.app', 'http://localhost:3000'],
     credentials: true
 }))
 
@@ -34,7 +34,7 @@ app.use('/api/notes',noteRoutes)
 const server = http.createServer(app);
 export const io = new SocketIOServer(server, {
   cors: {
-    origin: ['*', 'http://localhost:3000'],
+    origin: ['*', 'https://web-app-six-gules.vercel.app', 'http://localhost:3000'],
     credentials: true,
   },
 });

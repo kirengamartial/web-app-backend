@@ -1,23 +1,35 @@
-import jwt from 'jsonwebtoken'
-import User from '../models/userModel.js'
+import jwt from 'jsonwebtoken';
+import User from '../models/userModel.js';
 
-const adminCheck = async(req, res, next) => {
-    const token = req.cookies.jwt
+const adminCheck = async (req, res, next) => {
+    let token;
 
-    if(token) {
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
         try {
-            const decoded = jwt.verify(token, process.env.SECRET)
-            req.user = await User.findById(decoded.userId).select('-password')
-            if(req.user && req.user.isAdmin) {
-                next()
+            token = req.headers.authorization.split(' ')[1];
+            
+            const decoded = jwt.verify(token, process.env.SECRET);
+            
+            req.user = await User.findById(decoded.userId).select('-password');
+            
+            if (req.user && req.user.isAdmin) {
+                next();
+            } else {
+                res.status(403).json({ message: "Not authorized as admin" });
             }
+            
         } catch (error) {
-            res.status(400).json({message: "Invalid Token"})
+            console.error(error);
+            res.status(401).json({ message: "Invalid token" });
         }
-    }else {
-        res.status(500).json({message: "There is no token"})
     }
-}
 
+    if (!token) {
+        res.status(401).json({ message: "Not authorized, no token" });
+    }
+};
 
-export default adminCheck
+export default adminCheck;
