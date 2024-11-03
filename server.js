@@ -13,9 +13,9 @@ import chatApp from './utilis/chatApp.js'
 dotenv.config()
 
 
-connectDb()
-const PORT = process.env.PORT || 5000
+connectDb();
 
+const PORT = process.env.PORT || 5000;
 
 const app = express()
 app.use(express.json())
