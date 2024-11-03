@@ -24,6 +24,6 @@ router.post('/reset-request', resetPasswordRequest)
 router.post('/reset-password', resetPassword)
 router.put('/edit',authCheck, editUser)
 router.post('/logout', logoutUser)
-router.delete('/delete/:id',adminCheck,deleteUser)
+router.delete('/delete/:id',authCheck,deleteUser)
 
 export default router
