@@ -1,21 +1,30 @@
-import jwt from 'jsonwebtoken'
-import User from '../models/userModel.js'
+import jwt from 'jsonwebtoken';
+import User from '../models/userModel.js';
 
-const authCheck = async(req, res, next) => {
-    const token = req.cookies.jwt
+const authCheck = async (req, res, next) => {
+    let token;
 
-    if(token) {
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
         try {
-            const decoded = jwt.verify(token, process.env.SECRET)
-            req.user = await User.findById(decoded.userId).select('-password')
-            next()
+            token = req.headers.authorization.split(' ')[1];
+
+            const decoded = jwt.verify(token, process.env.SECRET);
+
+            req.user = await User.findById(decoded.userId).select('-password');
+
+            next();
         } catch (error) {
-            res.status(400).json({message: "Invalid Token"})
+            console.error(error);
+            return res.status(401).json({ message: "Invalid token" });
         }
-    }else {
-        res.status(500).json({message: "There is no token"})
     }
-}
 
+    if (!token) {
+        return res.status(401).json({ message: "Not authorized, no token provided" });
+    }
+};
 
-export default authCheck
+export default authCheck;
